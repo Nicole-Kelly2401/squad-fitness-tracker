@@ -37,7 +37,25 @@ class Squad:
             elif score < self.readiness.low_medium:
                 alerts.append(Alert(player, f"Readiness dropping ({score:.0f})", "Medium"))
                 
-        return alerts 
+        return alerts
+    
+    def alerts_for(self, player, today):
+        player_alerts = []
+        for alert in self.check_alert(today):
+            if alert.player is player:
+                player_alerts.append(alert)
+        return player_alerts
+    
+    def show_levels(self, planners, today):
+        print(f"{'Player':<12}{'Readiness':>10}{'Fatigue':>10}{'Load':>8}  Status")
+        print("-" * 58)
+        for player in self.rank():
+            score = self.readiness.score(player)
+            alerts = self.alerts_for(player, today)
+            print(f"{player.name:<12}{score:>10.0f}", end="")
+            for planner in planners:
+                print(f"{planner.level(score, alerts):>12}", end="")
+        print()
         
     def show_table(self, today):
         print(f"{'Player':<12}{'Readiness':>10}{'Fatigue':>10}{'Load':>8}   Status")
@@ -48,3 +66,10 @@ class Squad:
             status = self.readiness.status(score)
             ratio_text = f"{ratio:.1f}x"
             print(f"{player.name:<12}{score:>10.0f}{player.fatigue:>10.0f}{ratio_text:>8}  {status}")
+            
+    def plan_week(self, planner, today):
+        for player in self.rank():
+            score = self.readiness.score(player)
+            alerts = self.alerts_for(player, today)
+            planner.show_plan(player, score, alerts)
+            print()

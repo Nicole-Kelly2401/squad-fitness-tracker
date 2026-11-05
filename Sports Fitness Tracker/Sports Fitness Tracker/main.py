@@ -1,5 +1,6 @@
 from session import Training_session, Match, Gym
 from recovery import Sleep, Massage, Ice_bath, Stretching
+from recovery_planner import Cautious, Balanced, Aggressive
 from player import Player
 from squad import Squad
 
@@ -47,6 +48,19 @@ for alert in alerts:
     print(alert)
 if len(alerts) == 0:
     print("No alerts!")
+
+print()
+print("~~~~Week level by planner style~~~~")
+planners = [Cautious(), Balanced(), Aggressive()]
+squad.show_levels(planners, today)
+
+print()
+print("~~~~Balanced plan for the week~~~~")
+squad.plan_week(Balanced(), today)
+
+print("~~~~Cautious plan for Player 2~~~~")
+player2_score = squad.readiness.score(player2)
+Cautious().show_plan(player2, player2_score, squad.alerts_for(player2, today))
 
 print()
 print("~~~~Bad input~~~~")
